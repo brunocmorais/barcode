@@ -22,9 +22,6 @@ stop = 6379
 class Barcode128C(Barcode):
     def generate(self, string : str, with_verification_digit : bool):
 
-        if not with_verification_digit:
-            raise Exception("Verification digit is mandatory for 128C!")
-        
         barcode : list[bool] = []
 
         barcode.extend(self.number_to_bitarray(start_c, 11))
