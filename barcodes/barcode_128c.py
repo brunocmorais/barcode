@@ -37,7 +37,7 @@ class Barcode128C(Barcode):
             bits = self.number_to_bitarray(table[int(char_1 + char_2)], 11)
             barcode.extend(bits)
         
-        verification_digit = int(self.generate_verification_digit(string))
+        verification_digit = int(self.generate_verification_digit("".join(char_values)))
 
         barcode.extend(self.number_to_bitarray(table[verification_digit], 11))
         barcode.extend(self.number_to_bitarray(stop, 13))
