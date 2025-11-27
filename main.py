@@ -1,43 +1,34 @@
 from io import BytesIO
+from typing import cast
 from flask import Flask, request, Response
-from generator import BarcodeGenerator
-from options import BarcodeOptions
-import base64
+from barcodes.barcode_type import BarcodeType
+from contracts.output_type import OutputType
+from services.generator import BarcodeGenerator
+from contracts.barcode_options import BarcodeOptions
 
 app = Flask(__name__)
 
-@app.post("/")
+@app.post("/generate")
 def post():
     try:
-        options = BarcodeOptions(**request.get_json())
-        image = BarcodeGenerator.generate(options)
-
-        if options.base64:
-            return { "result" : f"{base64.b64encode(image).decode("utf-8")}" }
-        else:
-            return Response(BytesIO(image), mimetype="image/bmp")
+        return response(BarcodeOptions(**request.get_json()))
     except Exception as e:
         return { "error" : f"{e}" }, 400
     
 @app.get("/<mode>/<type>/<string>")
 def get(mode : str, type : str, string : str):
     try:
-        b64 : bool
-
-        match mode:
-            case "image" : b64 = False
-            case "base64" : b64 = True
-            case _ : raise Exception("Unknown mode, valid modes are 'image' and 'base64'.")
-
-        options = BarcodeOptions(string, type)
-        image = BarcodeGenerator.generate(options)
-
-        if b64:
-            return { "result" : f"{base64.b64encode(image).decode("utf-8")}" }
-        else:
-            return Response(BytesIO(image), mimetype="image/bmp")
+        return response(BarcodeOptions(string=string, type=BarcodeType(type), output_type=OutputType(mode)))
     except Exception as e:
         return { "error" : f"{e}" }, 400
+    
+def response(options : BarcodeOptions):
+    result = BarcodeGenerator.generate(options)
+
+    if options.output_type == OutputType.Image:
+        return Response(BytesIO(cast(bytes, result)), mimetype="image/bmp")
+    else:
+        return { "result" : f"{result}" }
     
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)

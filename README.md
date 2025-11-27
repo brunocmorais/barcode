@@ -8,3 +8,8 @@ Simple Python project to generate various types of barcode, including:
 - EAN-8
 - EAN-13
 - UPC-A
+- CODE-93
+- Codabar
+
+# TODO
+- add reading of barcode

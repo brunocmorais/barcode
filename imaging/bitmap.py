@@ -1,4 +1,4 @@
-from options import BarcodeOptions
+from contracts.barcode_options import BarcodeOptions
 
 
 class Bitmap:
@@ -45,9 +45,9 @@ class Bitmap:
     def to_pixels(self, barcode : list[bool], opt : BarcodeOptions):
 
         pixel_line = [
-            *([0xFFFFFF] * opt.quiet_zone_size), 
+            *([0xFFFFFF] * opt.quiet_zone_x), 
             *([0x000000 if bar else 0xFFFFFF for bar in barcode]), 
-            *([0xFFFFFF] * opt.quiet_zone_size)
+            *([0xFFFFFF] * opt.quiet_zone_x)
         ]
         
         scaled_line : list[int] = []
@@ -56,7 +56,7 @@ class Bitmap:
             scaled_line.extend([pixel] * opt.scale_factor)
 
         return [
-            *([[0xFFFFFF] * len(scaled_line) for _ in range(opt.quiet_zone_size * opt.scale_factor)]),
+            *([[0xFFFFFF] * len(scaled_line) for _ in range(opt.quiet_zone_y * opt.scale_factor)]),
             *(scaled_line for _ in range(opt.height)),
-            *([[0xFFFFFF] * len(scaled_line) for _ in range(opt.quiet_zone_size * opt.scale_factor)])
+            *([[0xFFFFFF] * len(scaled_line) for _ in range(opt.quiet_zone_y * opt.scale_factor)])
         ]

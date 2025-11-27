@@ -1,4 +1,7 @@
-class Packbits:
+
+from compressors.compressor import Compressor
+
+class Packbits(Compressor):
     def compress(self, bytes : bytes):
         index = 0
 
