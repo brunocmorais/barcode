@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  barcode:
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: brunocmorais/barcode
+    container_name: barcode
+    ports:
+      - ${PORT}:80

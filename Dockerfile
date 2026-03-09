@@ -1,16 +1,9 @@
-FROM python:3.13-alpine
+FROM astral/uv:python3.13-alpine
 WORKDIR /app
 
-COPY *.py pyproject.toml .
-COPY ./barcodes ./barcodes
-COPY ./services ./services
-COPY ./compressors ./compressors
-COPY ./contracts ./contracts
-COPY ./factories ./factories
-COPY ./imaging ./imaging
-COPY ./services ./services
+COPY pyproject.toml ./
+COPY ./src ./src
 
-RUN python -m pip install uv
-RUN uv sync
+CMD uv run gunicorn --bind 0.0.0.0:80 --chdir src main:app
 
-ENTRYPOINT uv run gunicorn --bind 0.0.0.0:8080 main:app
+EXPOSE 80
